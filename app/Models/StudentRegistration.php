@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class StudentRegistration extends Model
 {
@@ -13,6 +14,7 @@ class StudentRegistration extends Model
 
     protected $fillable = [
         'user_id',
+        'ppdb_stage_id',
         'no_pendaftaran',
         'nama_pengantar',
         'nama',
@@ -51,6 +53,8 @@ class StudentRegistration extends Model
         'fotokopi_kk',
         'fotokopi_ijazah',
         'fotokopi_akte',
+
+        // Fisik
         'tato',
         'tindik',
         'buta_warna',
@@ -98,5 +102,20 @@ class StudentRegistration extends Model
     public function getFotokopiAkteUrlAttribute()
     {
         return $this->fotokopi_akte ? asset('storage/student_documents/' . $this->fotokopi_akte) : null;
+    }
+
+    public function payment(): HasOne
+    {
+        return $this->hasOne(Payment::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function ppdbStage()
+    {
+        return $this->belongsTo(PpdbStage::class, 'ppdb_stage_id');
     }
 }

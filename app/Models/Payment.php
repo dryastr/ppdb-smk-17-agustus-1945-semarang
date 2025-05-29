@@ -12,6 +12,7 @@ class Payment extends Model
     protected $fillable = [
         'student_registration_id',
         'user_id',
+        'rekening_id',
         'amount',
         'status',
         'metode_pembayaran',
@@ -28,9 +29,35 @@ class Payment extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     public function studentRegistration()
     {
         return $this->belongsTo(StudentRegistration::class);
+    }
+
+    public function rekening()
+    {
+        return $this->belongsTo(Rekening::class);
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        switch ($this->status) {
+            case 'menunggu':
+                return 'Menunggu Konfirmasi';
+            case 'dibayar':
+                return 'Lunas';
+            case 'gagal':
+                return 'Gagal';
+            case 'ditolak':
+                return 'Ditolak';
+            default:
+                return ucfirst($this->status);
+        }
+    }
+
+    public function getFormattedAmountAttribute()
+    {
+        return 'Rp ' . number_format($this->amount, 0, ',', '.');
     }
 }

@@ -34,7 +34,8 @@
                 @apply transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg;
             }
         }
-        *{
+
+        * {
             scroll-behavior: smooth;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -75,73 +76,66 @@
         </div>
     </nav>
 
+    {{-- {{dd($heroSection)}} --}}
     <section class="py-16 md:py-24 bg-gradient-to-r from-primarySoft to-secondarySoft">
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-10 md:mb-0">
                     <h1 class="text-4xl md:text-5xl font-bold text-gray-800 leading-tight mb-4">
-                        Pendaftaran Peserta Didik Baru <span class="text-primary">2025/2026</span>
+                        {{ $heroSection->title ?? 'Pendaftaran Peserta Didik Baru' }}
                     </h1>
                     <p class="text-gray-600 mb-8 text-lg">
-                        Selamat datang di portal PPDB online sekolah kami. Daftarkan putra/putri Anda untuk bergabung
-                        dengan tempat belajar yang inspiratif dan penuh prestasi.
+                        {{ $heroSection->description ?? 'Selamat datang di portal PPDB online sekolah kami. Daftarkan putra/putri Anda untuk bergabung dengan tempat belajar yang inspiratif dan penuh prestasi.' }}
                     </p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                         <a href="{{ route('register') }}"
                             class="bg-primary hover:bg-red-700 text-white px-6 py-3 rounded-md text-center font-medium transition shadow-md">Daftar
                             Sekarang</a>
-                        <a href="#"
+                        <a href="{{ $heroSection->link_persyaratan ?? '#' }}"
                             class="border border-primary text-primary hover:bg-primary hover:text-white px-6 py-3 rounded-md text-center font-medium transition shadow-md">Lihat
                             Persyaratan</a>
                     </div>
                 </div>
                 <div class="md:w-1/2 flex justify-center">
-                    <img src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqkwwzAhNLBzC3J4pKP9v4XX75_8sqp97vlkVzUxuRR9Kq-ymKTD1CHzeZgfEkTiexuygadV5Cg9YFzsLATiSi6QGoqNt3fh465mKEEe-qtlcQdZAvTjiZ90o5anTqlO2ueDuqY=s1360-w1360-h1020-rw"
-                        alt="Siswa belajar" class="rounded-lg shadow-xl w-full max-w-md">
+                    <img src="{{ $heroSection->image ? Storage::url($heroSection->image) : 'http://via.placeholder.com/600x400' }}"
+                        alt="{{ $heroSection->title ?? 'Hero Section Image' }}"
+                        class="rounded-lg shadow-xl w-full max-w-md">
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-white" id="registration-flow">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">Alur Pendaftaran</h2>
                 <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-primary card-hover">
-                    <div
-                        class="w-12 h-12 bg-primarySoft rounded-full flex items-center justify-center text-primary font-bold text-xl mb-4">
-                        1</div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Registrasi Akun</h3>
-                    <p class="text-gray-600">Buat akun pendaftaran dengan mengisi formulir registrasi online.</p>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-secondary card-hover">
-                    <div
-                        class="w-12 h-12 bg-secondarySoft rounded-full flex items-center justify-center text-secondary font-bold text-xl mb-4">
-                        2</div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Isi Formulir</h3>
-                    <p class="text-gray-600">Lengkapi data peserta didik dan upload dokumen persyaratan.</p>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-primary card-hover">
-                    <div
-                        class="w-12 h-12 bg-primarySoft rounded-full flex items-center justify-center text-primary font-bold text-xl mb-4">
-                        3</div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Verifikasi Data</h3>
-                    <p class="text-gray-600">Tim kami akan memverifikasi kelengkapan data dan dokumen Anda.</p>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-secondary card-hover">
-                    <div
-                        class="w-12 h-12 bg-secondarySoft rounded-full flex items-center justify-center text-secondary font-bold text-xl mb-4">
-                        4</div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Pengumuman</h3>
-                    <p class="text-gray-600">Hasil seleksi akan diumumkan melalui website dan email pendaftar.</p>
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @forelse ($registrationFlows as $flow)
+                    @php
+                        $borderColorClass = $flow->step_number % 2 == 1 ? 'border-primary' : 'border-secondary';
+                        $bgColorClass = $flow->step_number % 2 == 1 ? 'bg-primarySoft' : 'bg-secondarySoft';
+                        $textColorClass = $flow->step_number % 2 == 1 ? 'text-primary' : 'text-secondary';
+                    @endphp
+                    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 {{ $borderColorClass }} card-hover">
+                        <div
+                            class="w-12 h-12 {{ $bgColorClass }} rounded-full flex items-center justify-center {{ $textColorClass }} font-bold text-xl mb-4">
+                            @if ($flow->icon)
+                                <i class="{{ $flow->icon }}"></i>
+                            @else
+                                {{-- {{ $flow->step_number }} --}}
+                            @endif
+                            {{ $loop->iteration }}
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $flow->title }}</h3>
+                        <p class="text-gray-600">{{ $flow->description }}</p>
+                    </div>
+                @empty
+                    <div class="md:col-span-4 text-center text-gray-600 py-10">Belum ada Alur Pendaftaran yang diatur.
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -154,61 +148,24 @@
             </div>
 
             <div class="max-w-3xl mx-auto">
-                <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition">
-                        <span class="font-medium text-gray-800">Apa saja persyaratan untuk mendaftar?</span>
-                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <div class="p-4 bg-gray-50 text-gray-600 hidden">
-                        <p>Persyaratan meliputi: fotokopi akta kelahiran, kartu keluarga, rapor terakhir, pas foto, dan
-                            dokumen lain sesuai ketentuan. Silakan lihat halaman persyaratan untuk detail lengkap.</p>
+                @forelse ($sortedFaqs as $faq)
+                    <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden faq-item">
+                        <button
+                            class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition faq-button">
+                            <span class="font-medium text-gray-800">{{ $faq->question }}</span>
+                            <svg class="w-5 h-5 text-primary faq-icon" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="p-4 bg-gray-50 text-gray-600 hidden faq-content">
+                            <p>{!! nl2br(e($faq->answer)) !!}</p>
+                        </div>
                     </div>
-                </div>
-
-                <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition">
-                        <span class="font-medium text-gray-800">Kapan batas waktu pendaftaran?</span>
-                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <div class="p-4 bg-gray-50 text-gray-600 hidden">
-                        <p>Batas waktu pendaftaran adalah tanggal 30 Juni 2025. Pendaftaran yang masuk setelah tanggal
-                            tersebut tidak akan diproses.</p>
-                    </div>
-                </div>
-
-                <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition">
-                        <span class="font-medium text-gray-800">Bagaimana cara mengetahui hasil seleksi?</span>
-                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <div class="p-4 bg-gray-50 text-gray-600 hidden">
-                        <p>Hasil seleksi akan diumumkan melalui website ini dan dikirim via email ke alamat email yang
-                            digunakan saat pendaftaran. Pengumuman akan dilakukan pada tanggal 15 Juli 2025.</p>
-                    </div>
-                </div>
-
-                <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition">
-                        <span class="font-medium text-gray-800">Apakah ada biaya pendaftaran?</span>
-                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <div class="p-4 bg-gray-50 text-gray-600 hidden">
-                        <p>Ada biaya pendaftaran sebesar Rp 150.000 yang dapat dibayarkan melalui transfer bank atau
-                            langsung ke sekolah. Biaya ini tidak dapat dikembalikan.</p>
-                    </div>
-                </div>
+                @empty
+                    <div class="text-center text-gray-600">Tidak ada FAQ yang tersedia saat ini.</div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -311,6 +268,31 @@
                 } else {
                     content.style.display = 'block';
                 }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqButtons = document.querySelectorAll('.faq-button');
+
+            faqButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const faqItem = this.closest('.faq-item');
+                    const faqContent = faqItem.querySelector('.faq-content');
+                    const faqIcon = faqItem.querySelector('.faq-icon');
+
+                    faqButtons.forEach(otherButton => {
+                        const otherFaqItem = otherButton.closest('.faq-item');
+                        if (otherFaqItem !== faqItem) {
+                            otherFaqItem.querySelector('.faq-content').classList.add(
+                                'hidden');
+                            otherFaqItem.querySelector('.faq-icon').style.transform =
+                                'rotate(0deg)';
+                        }
+                    });
+
+                    faqContent.classList.toggle('hidden');
+                });
             });
         });
     </script>

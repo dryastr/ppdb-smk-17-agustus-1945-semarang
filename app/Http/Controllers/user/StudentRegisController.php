@@ -204,6 +204,8 @@ class StudentRegisController extends Controller
 
         $validated['user_id'] = $studentRegistration->user_id ?? Auth::id();
 
+        $validated['status'] = 'menunggu';
+
         $studentRegistration->update($validated);
 
         return redirect()->route('student-registrations.index')

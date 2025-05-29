@@ -65,15 +65,41 @@
                     </ul>
                 </li>
 
-                <li class="sidebar-item has-sub {{ Request::is('payment-registration*') ? 'active' : '' }}">
+                <li class="sidebar-item has-sub {{ Request::is('history-payment-registration*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-card-checklist"></i>
-                        <span>Pembayaran Registrasi</span>
+                        <span>Riwayat Pembayaran</span>
                     </a>
 
                     <ul class="submenu">
-                        <li class="submenu-item {{ Request::routeIs('payment-registration.index') ? 'active' : '' }}">
-                            <a href="{{ route('payment-registration.index') }}" class="submenu-link">Lihat</a>
+                        <li class="submenu-item {{ Request::routeIs('history-payment-registration.index') ? 'active' : '' }}">
+                            <a href="{{ route('history-payment-registration.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('profile-user*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Profil</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('profile-user.index') ? 'active' : '' }}">
+                            <a href="{{ route('profile-user.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('print-payments*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Cetak Bukti Pembayaran</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('print-payments.index') ? 'active' : '' }}">
+                            <a href="{{ route('print-payments.index') }}" class="submenu-link">Lihat</a>
                         </li>
                     </ul>
                 </li>
@@ -100,16 +126,119 @@
                     </ul>
                 </li>
 
-                <li class="sidebar-item has-sub {{ Request::is('manage-payment*') ? 'active' : '' }}">
+                <li class="sidebar-item has-sub {{ Request::is('manage-payment-registration*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-card-checklist"></i>
-                        <span>Pembayarab Registrasi Siswa</span>
+                        <span>Pembayaran Registrasi Siswa</span>
                     </a>
 
                     <ul class="submenu">
-                        <li
-                            class="submenu-item {{ Request::routeIs('manage-payment.index') ? 'active' : '' }}">
-                            <a href="{{ route('manage-payment.index') }}" class="submenu-link">Lihat</a>
+                        <li class="submenu-item {{ Request::routeIs('manage-payment-registration.index') ? 'active' : '' }}">
+                            <a href="{{ route('manage-payment-registration.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('rekenings*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Rekening</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('rekenings.index') ? 'active' : '' }}">
+                            <a href="{{ route('rekenings.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('manage-history*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Riwayat Pembayaran</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('manage-history.index') ? 'active' : '' }}">
+                            <a href="{{ route('manage-history.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('manage-user*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Daftar Siswa/i</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('manage-user.index') ? 'active' : '' }}">
+                            <a href="{{ route('manage-user.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('faqs*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>FAQ</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('faqs.index') ? 'active' : '' }}">
+                            <a href="{{ route('faqs.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('admin.hero_section*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Hero Section</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('admin.hero_section.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.hero_section.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('registration-flows*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Flow Registrasi</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('registration-flows.index') ? 'active' : '' }}">
+                            <a href="{{ route('registration-flows.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('ppdb-stages*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Tahapan PPDB</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('ppdb-stages.index') ? 'active' : '' }}">
+                            <a href="{{ route('ppdb-stages.index') }}" class="submenu-link">Lihat</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item has-sub {{ Request::is('profile-admin*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Profil</span>
+                    </a>
+
+                    <ul class="submenu">
+                        <li class="submenu-item {{ Request::routeIs('profile-admin.index') ? 'active' : '' }}">
+                            <a href="{{ route('profile-admin.index') }}" class="submenu-link">Lihat</a>
                         </li>
                     </ul>
                 </li>

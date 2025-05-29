@@ -21,12 +21,21 @@
                             <button class="nav-link" id="ditolak-tab" data-bs-toggle="tab" data-bs-target="#ditolak"
                                 type="button" role="tab">Ditolak</button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ditolak-tab" data-bs-toggle="tab" data-bs-target="#diperiksa"
+                                type="button" role="tab">Diperiksa</button>
+                        </li>
                     </ul>
                 </div>
 
                 <div class="card-body tab-content" id="statusTabContent">
                     @php
-                        $statuses = ['menunggu' => 'Menunggu', 'diterima' => 'Diterima', 'ditolak' => 'Ditolak'];
+                        $statuses = [
+                            'menunggu' => 'Menunggu',
+                            'diterima' => 'Diterima',
+                            'diperiksa' => 'Diperiksa',
+                            'ditolak' => 'Ditolak',
+                        ];
                     @endphp
 
                     @foreach ($statuses as $statusKey => $statusLabel)
@@ -63,7 +72,22 @@
                                                             aria-labelledby="dropdownMenuButton-{{ $registration->id }}">
                                                             <li>
                                                                 <a class="dropdown-item" href="javascript:void(0)"
-                                                                    onclick="openStatusModal({{ $registration->id }}, '{{ $registration->status }}', '{{ $registration->keterangan_status }}')">Ubah
+                                                                    onclick="openStatusModal(
+                                                                        {{ $registration->id }},
+                                                                        '{{ $registration->status }}',
+                                                                        '{{ $registration->keterangan_status }}',
+                                                                        '{{ $registration->ppdb_stage_id ?? '' }}',
+                                                                        {
+                                                                            tato: {{ $registration->tato ? 'true' : 'false' }},
+                                                                            tindik: {{ $registration->tindik ? 'true' : 'false' }},
+                                                                            buta_warna: {{ $registration->buta_warna ? 'true' : 'false' }},
+                                                                            hasil_tes: '{{ $registration->hasil_tes ?? '' }}',
+                                                                            keterangan_fisik_tato: '{{ $registration->keterangan_fisik_tato ?? '' }}',
+                                                                            keterangan_fisik_tindik: '{{ $registration->keterangan_fisik_tindik ?? '' }}',
+                                                                            keterangan_fisik_butawarna: '{{ $registration->keterangan_fisik_butawarna ?? '' }}',
+                                                                            keterangan_fisik_tinggi_berat: '{{ $registration->keterangan_fisik_tinggi_berat ?? '' }}'
+                                                                        }
+                                                                    )">Ubah
                                                                     Status</a>
                                                             </li>
                                                             <li>
@@ -102,10 +126,26 @@
                             <label for="status" class="form-label">Status</label>
                             <select name="status" id="statusSelect" class="form-select" required>
                                 <option value="">-- Pilih Status --</option>
+                                <option value="diperiksa">Diperiksa</option>
                                 <option value="diterima">Diterima</option>
                                 <option value="ditolak">Ditolak</option>
                                 <option value="menunggu">Menunggu</option>
                             </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="ppdbStageSelect" class="form-label">Tahap PPDB</label>
+                            <select name="ppdb_stage_id" id="ppdbStageSelect" class="form-select">
+                                <option value="">-- Pilih Tahap --</option>
+                                @foreach ($ppdbStages as $stage)
+                                    <option value="{{ $stage->id }}">
+                                        {{ $stage->name }}
+                                        ({{ \Carbon\Carbon::parse($stage->start_date)->format('d M Y') }} -
+                                        {{ \Carbon\Carbon::parse($stage->end_date)->format('d M Y') }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">Akan memperbarui tahap pendaftaran siswa.</small>
                         </div>
 
                         <div class="mb-3 d-none" id="keteranganDiv">
@@ -348,10 +388,22 @@
                                             <th>Fotokopi KK</th>
                                             <td>
                                                 @if ($registration->fotokopi_kk)
-                                                    <img src="{{ asset($registration->fotokopi_kk) }}" alt="Pas Foto"
-                                                        class="img-thumbnail" style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->fotokopi_kk) }}" alt="Pas Foto"
+                                                            class="img-thumbnail" style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->fotokopi_kk }}', 'Fotokopi KK')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->fotokopi_kk }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    <span class="badge bg-warning">Belum</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -359,22 +411,47 @@
                                             <th>Fotokopi Ijazah</th>
                                             <td>
                                                 @if ($registration->fotokopi_ijazah)
-                                                    <img src="{{ asset($registration->fotokopi_ijazah) }}"
-                                                        alt="Fotokopi Ijazah" class="img-thumbnail"
-                                                        style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->fotokopi_ijazah) }}"
+                                                            alt="Pas Foto" class="img-thumbnail"
+                                                            style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->fotokopi_ijazah }}', 'Fotokopi Ijazah')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->fotokopi_ijazah }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    <span class="badge bg-warning">Belum</span>
                                                 @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Fotokopi Akte</th>
                                             <td>
                                                 @if ($registration->fotokopi_akte)
-                                                    <img src="{{ asset($registration->fotokopi_akte) }}"
-                                                        alt="Fotokopi Akte" class="img-thumbnail"
-                                                        style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->fotokopi_akte) }}"
+                                                            alt="Pas Foto" class="img-thumbnail"
+                                                            style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->fotokopi_akte }}', 'Fotokopi Akte')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->fotokopi_akte }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    <span class="badge bg-warning">Belum</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -412,10 +489,22 @@
                                             <th>Pas Foto</th>
                                             <td>
                                                 @if ($registration->pas_foto)
-                                                    <img src="{{ asset($registration->pas_foto) }}" alt="Pas Foto"
-                                                        class="img-thumbnail" style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->pas_foto) }}" alt="Pas Foto"
+                                                            class="img-thumbnail" style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->pas_foto }}', 'Fotokopi KK')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->pas_foto }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    Belum
                                                 @endif
                                             </td>
                                         </tr>
@@ -432,10 +521,42 @@
         </div>
     </div>
 
+    <div class="modal fade" id="imageViewModal" tabindex="-1" aria-labelledby="imageViewModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageViewModalLabel">Pratinjau Gambar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="imageViewModalImage" src="" alt="Pratinjau Dokumen" class="img-fluid"
+                        style="max-height: 80vh;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function openStatusModal(id, currentStatus = '', keterangan = '', extraData = {}) {
+        function openImageViewModal(imageUrl, title) {
+            document.getElementById('imageViewModalImage').src = imageUrl;
+            document.getElementById('imageViewModalLabel').innerText = 'Pratinjau ' + title;
+
+            var imageViewModal = new bootstrap.Modal(document.getElementById('imageViewModal'));
+            imageViewModal.show();
+        }
+    </script>
+    <script>
+        function openStatusModal(id, currentStatus = '', keterangan = '', ppdbStageId = '',
+        extraData = {}) {
             const modal = new bootstrap.Modal(document.getElementById('statusModal'));
             document.getElementById('statusRegistrationId').value = id;
+
+            const ppdbStageSelect = document.getElementById('ppdbStageSelect');
+            ppdbStageSelect.value = ppdbStageId;
 
             const form = document.getElementById('statusForm');
             form.action = `/manage-student-registrations/${id}/update-status`;
@@ -451,6 +572,7 @@
                 keteranganDiv.classList.remove('d-none');
             } else {
                 keteranganDiv.classList.add('d-none');
+                keteranganInput.value = '';
             }
 
             statusSelect.addEventListener('change', function() {
@@ -462,18 +584,17 @@
                 }
             });
 
-            if (extraData) {
-                document.getElementById('tatoCheckbox').checked = extraData.tato ?? false;
-                document.getElementById('tindikCheckbox').checked = extraData.tindik ?? false;
-                document.getElementById('butawarnaCheckbox').checked = extraData.buta_warna ?? false;
-                // document.getElementById('tinggiInput').value = extraData.tinggi_badan ?? '';
-                // document.getElementById('beratInput').value = extraData.berat_badan ?? '';
-                document.getElementById('hasilTesInput').value = extraData.hasil_tes ?? '';
-                document.getElementById('ketTatoInput').value = extraData.keterangan_fisik_tato ?? '';
-                document.getElementById('ketTindikInput').value = extraData.keterangan_fisik_tindik ?? '';
-                document.getElementById('ketButaInput').value = extraData.keterangan_fisik_butawarna ?? '';
-                document.getElementById('ketTinggiBeratInput').value = extraData.keterangan_fisik_tinggi_berat ?? '';
-            }
+            document.getElementById('tatoCheckbox').checked = extraData.tato ?? false;
+            document.getElementById('tindikCheckbox').checked = extraData.tindik ?? false;
+            document.getElementById('butawarnaCheckbox').checked = extraData.buta_warna ?? false;
+            // document.getElementById('tinggiInput').value = extraData.tinggi_badan ?? '';
+            // document.getElementById('beratInput').value = extraData.berat_badan ?? '';
+            document.getElementById('hasilTesInput').value = extraData.hasil_tes ?? '';
+            document.getElementById('ketTatoInput').value = extraData.keterangan_fisik_tato ?? '';
+            document.getElementById('ketTindikInput').value = extraData.keterangan_fisik_tindik ?? '';
+            document.getElementById('ketButaInput').value = extraData.keterangan_fisik_butawarna ?? '';
+            document.getElementById('ketTinggiBeratInput').value = extraData.keterangan_fisik_tinggi_berat ?? '';
+
 
             modal.show();
         }

@@ -55,22 +55,43 @@
                                                     </button>
                                                     <ul class="dropdown-menu"
                                                         aria-labelledby="dropdownMenuButton-{{ $registration->id }}">
+                                                        @php
+                                                            $isPaid = $registration->payments
+                                                                ->where('status', 'dibayar')
+                                                                ->isNotEmpty();
+
+                                                            $isAccepted = $registration->status === 'diterima';
+
+                                                            $isDisabled = $isPaid && $isAccepted;
+                                                        @endphp
+
                                                         <li>
-                                                            <a class="dropdown-item" href="javascript:void(0)"
-                                                                onclick="openEditModal({{ json_encode($registration) }})">Ubah</a>
+                                                            <a class="dropdown-item {{ $isDisabled ? 'disabled' : '' }}"
+                                                                href="javascript:void(0)"
+                                                                onclick="{{ $isDisabled ? 'event.preventDefault();' : 'openEditModal(' . json_encode($registration) . ');' }}"
+                                                                {{ $isDisabled ? 'aria-disabled="true"' : '' }}>
+                                                                Ubah
+                                                            </a>
                                                         </li>
                                                         <li>
                                                             <a class="dropdown-item" href="javascript:void(0)"
-                                                                onclick="showDetailModal({{ $registration->id }})">Detail</a>
+                                                                onclick="showDetailModal({{ $registration->id }})">
+                                                                Detail
+                                                            </a>
                                                         </li>
                                                         <li>
                                                             <form
                                                                 action="{{ route('student-registrations.destroy', $registration->id) }}"
                                                                 method="POST"
-                                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus pendaftaran ini?')">
+                                                                onsubmit="{{ $isDisabled ? 'return false;' : "return confirm('Apakah Anda yakin ingin menghapus pendaftaran ini?')" }}">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="dropdown-item">Hapus</button>
+                                                                <button type="submit"
+                                                                    class="dropdown-item {{ $isDisabled ? 'disabled' : '' }}"
+                                                                    {{ $isDisabled ? 'disabled' : '' }}
+                                                                    {{ $isDisabled ? 'aria-disabled="true"' : '' }}>
+                                                                    Hapus
+                                                                </button>
                                                             </form>
                                                         </li>
                                                     </ul>
@@ -1015,10 +1036,23 @@
                                             <th>Fotokopi KK</th>
                                             <td>
                                                 @if ($registration->fotokopi_kk)
-                                                    <img src="{{ asset($registration->fotokopi_kk) }}" alt="Pas Foto"
-                                                        class="img-thumbnail" style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->fotokopi_kk) }}"
+                                                            alt="Pas Foto" class="img-thumbnail"
+                                                            style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->fotokopi_kk }}', 'Fotokopi KK')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->fotokopi_kk }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    <span class="badge bg-warning">Belum</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -1026,22 +1060,47 @@
                                             <th>Fotokopi Ijazah</th>
                                             <td>
                                                 @if ($registration->fotokopi_ijazah)
-                                                    <img src="{{ asset($registration->fotokopi_ijazah) }}"
-                                                        alt="Fotokopi Ijazah" class="img-thumbnail"
-                                                        style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->fotokopi_ijazah) }}"
+                                                            alt="Pas Foto" class="img-thumbnail"
+                                                            style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->fotokopi_ijazah }}', 'Fotokopi Ijazah')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->fotokopi_ijazah }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    <span class="badge bg-warning">Belum</span>
                                                 @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Fotokopi Akte</th>
                                             <td>
                                                 @if ($registration->fotokopi_akte)
-                                                    <img src="{{ asset($registration->fotokopi_akte) }}"
-                                                        alt="Fotokopi Akte" class="img-thumbnail"
-                                                        style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->fotokopi_akte) }}"
+                                                            alt="Pas Foto" class="img-thumbnail"
+                                                            style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->fotokopi_akte }}', 'Fotokopi Akte')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->fotokopi_akte }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    <span class="badge bg-warning">Belum</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -1079,10 +1138,22 @@
                                             <th>Pas Foto</th>
                                             <td>
                                                 @if ($registration->pas_foto)
-                                                    <img src="{{ asset($registration->pas_foto) }}" alt="Pas Foto"
-                                                        class="img-thumbnail" style="max-height: 150px;">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="{{ asset($registration->pas_foto) }}" alt="Pas Foto"
+                                                            class="img-thumbnail" style="max-height: 150px;">
+                                                        <div class="mt-2">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2"
+                                                                onclick="openImageViewModal('{{ $registration->pas_foto }}', 'Fotokopi KK')">
+                                                                Lihat
+                                                            </button>
+                                                            <a href="{{ $registration->pas_foto }}"
+                                                                class="btn btn-sm btn-info" download>
+                                                                Download
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 @else
-                                                    -
+                                                    Belum
                                                 @endif
                                             </td>
                                         </tr>
@@ -1098,6 +1169,35 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="imageViewModal" tabindex="-1" aria-labelledby="imageViewModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageViewModalLabel">Pratinjau Gambar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="imageViewModalImage" src="" alt="Pratinjau Dokumen" class="img-fluid"
+                        style="max-height: 80vh;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openImageViewModal(imageUrl, title) {
+            document.getElementById('imageViewModalImage').src = imageUrl;
+            document.getElementById('imageViewModalLabel').innerText = 'Pratinjau ' + title;
+
+            var imageViewModal = new bootstrap.Modal(document.getElementById('imageViewModal'));
+            imageViewModal.show();
+        }
+    </script>
 
     <script>
         function toDateInputFormat(dateStr) {
